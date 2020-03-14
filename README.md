@@ -1,2 +1,2 @@
 # siR
-SIR-inspired epidemic modeling
+## SIR-inspired epidemic modeling, Shiny-fied
