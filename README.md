@@ -1,3 +1,3 @@
 # siR
-## SIR-inspired epidemic modeling, [Shiny-fied](https://cgrilson.shinyapps.io/model)
+## SIR-inspired COVID-19 modeling, [Shiny-fied](https://cgrilson.shinyapps.io/model)
 
