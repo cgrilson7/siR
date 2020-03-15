@@ -26,12 +26,11 @@ simulate_day <- function(t, s, i, r, beta, gamma){
     r = r + dr(i, gamma)
     )
   
-  next_day <- lapply(next_day, function(x){ifelse(x < 0, 0, ifelse(x > 1, 1, x))})
+  next_day <- lapply(next_day[c('s', 'i', 'r')], function(x){ifelse(x < 0, 0, ifelse(x > 1, 1, x))})
   
   next_day$t <- t
   
-  next_day
-
+  return(next_day)
 }
 
 ui <- fluidPage(
@@ -40,17 +39,17 @@ ui <- fluidPage(
     tags$style(type="text/css", "label{ text-align: center; vertical-align: middle; } .form-control { display: table-row; text-align: center;}")
   ),
   
-  titlePanel('An S-I-R Model of Infectious Disease'),
+  titlePanel('An Compartmental Model of Infectious Disease'),
   
   sidebarLayout(
     sidebarPanel(align = 'center',
       div(align = 'center', 
         numericInput(inputId = 'N', "Total Population", value = 331000000, min = 1000, max = NA, width = '50%'),
-        numericInput(inputId = 'I_0', "Initial Number of Cases",  value = 1629, min = 1, max = NA, width = '50%'),
-        dateInput(inputId = 'start_date', "Date of Above Caseload", value = "2020-03-14", width = '70%')
+        numericInput(inputId = 'I_0', "Initial Number of Cases",  value = 1629, min = 0, max = NA, width = '50%'),
+        dateInput(inputId = 'start_date', "Date of Above Caseload", value = Sys.Date(), width = '70%')
       ),
-      sliderInput(inputId = 'c', label = "Avg. Infected's Contacts per Day", min = 1, max = 20, value = 10),
-      sliderInput(inputId = 'p', label = "Probability of Infecting a Contact", min = 0.01, max = 1, value = 0.1),
+      sliderInput(inputId = 'c', label = "Avg. Infected Person's Contacts per Day", min = 0, max = 20, value = 10),
+      sliderInput(inputId = 'p', label = "Probability of Infecting a Contact", min = 0.01, max = 1, value = 0.07),
       sliderInput(inputId = 'd', "Infectious Period (Days)", min = 1, max = 14, value = 7),
       sliderInput(inputId = 'sim_duration', "Days to Simulate", min = 1, max = 360,  value = 90),
       actionButton(inputId = 'simulate', label = "Run Simulation")
@@ -103,20 +102,18 @@ server <- function(input, output, session){
       mutate(date = input$start_date + days(t)) %>% 
       mutate(Susceptible = s*input$N,
              Infected = i*input$N,
-             Removed = r*input$N)
+             Removed = r*input$N) %>% 
+      pivot_longer(Susceptible:Removed, names_to = "Status") %>% 
+      mutate(Status = factor(Status, levels = c("Susceptible", "Infected", "Removed")))
+    
     ggplotly({
-      ggplot(df, aes(x = date)) + 
-      ## Susceptible population
-      geom_point(aes(y = Susceptible), color = 'darkgreen', size = 3) + 
-      geom_line(aes(y = Susceptible), color = 'darkgreen', size = 2) +
-      ## Infected population
-      geom_point(aes(y = Infected), color = 'darkred', size = 3) + 
-      geom_line(aes(y = Infected), color = 'darkred', size = 2) +
-      ## Removed population
-      geom_point(aes(y = Removed), color = 'gray', size = 2) +
-      geom_line(aes(y = Removed), color = 'gray', size = 1) +
+      ggplot(df, aes(x = date, y = value)) + 
+      geom_point(aes(color = Status), size = 2, alpha = 0.5) + 
+      geom_line(aes(color = Status)) + 
+      scale_color_manual(values = c('darkgreen', 'darkred', 'gray')) + 
       theme_minimal() +
       scale_y_continuous(labels = scales::comma) + 
+      scale_x_date(date_breaks = "1 month", date_minor_breaks = "1 week", date_labels = "%B") +
       ylab("Population") + 
       xlab("Date") +
       theme(axis.text.y = element_text(angle = 45))
