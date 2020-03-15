@@ -1,5 +1,5 @@
 # siR
-## SIR-inspired epidemic modeling, [Shiny-fied](https://cgrilson.shinyapps.io/model)
+## SIR-inspired COVID-19 modeling, [Shiny-fied](https://cgrilson.shinyapps.io/model)
 
 The model used for this simulation is an example of a [compartmental model](https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology), in which the population is divided into compartments, or disease states. Here, those states are **S**usceptible, **I**nfected, and **R**emoved (recovered or dead). Individuals transition between the states according to transition rates, which we can express as a set of differential equations (see below).
 
