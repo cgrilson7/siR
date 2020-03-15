@@ -1,5 +1,11 @@
-# siR
-## SIR-inspired epidemic modeling, [Shiny-fied](https://cgrilson.shinyapps.io/model)
+---
+title: Model Summary
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 The model used for this simulation is an example of a [compartmental model](https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology), in which the population is divided into compartments, or disease states. Here, those states are **S**usceptible, **I**nfected, and **R**emoved (recovered or dead). Individuals transition between the states according to transition rates, which we can express as a set of differential equations (see below).
 
@@ -12,5 +18,3 @@ There are a few key assumptions for this model. Beginning with the most unrealis
 * Once an individual has the disease for the full infectious period, $d$, they cannot infected or be infected again; hence, they are referred to as ‘removed’.
 
 * $d$ is also the time to death. Either individuals recover at $d$ days or they die at $d$ days (at a rate of $m$).
-
-![](www/explanation.png)

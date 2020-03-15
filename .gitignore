@@ -39,3 +39,4 @@ vignettes/*.pdf
 .Renviron
 .DS_Store
 rsconnect/shinyapps.io
+www/markdown_explanation.html

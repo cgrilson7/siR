@@ -61,6 +61,7 @@ ui <- fluidPage(
     ),
     mainPanel(
       plotlyOutput('progression'),
+      uiOutput('markdown_explanation'),
       img(src='explanation.png', align = "center")
     )
   )
@@ -91,7 +92,7 @@ server <- function(input, output, session){
     
     results <- list(t, s, i, r) %>% set_names("t", "s", "i", "r")
     for(t in 1:input$sim_duration){
-      cat(paste0("t: ", t, "\ts: ", s, "\ni: ", i, "\nr: ", r, "\n"))
+      # cat(paste0("t: ", t, "\ts: ", s, "\ni: ", i, "\nr: ", r, "\n"))
       new <- simulate_day(t, s, i, r, beta(), gamma())
       results <- bind_rows(results, new)
       s <- new$s
@@ -127,6 +128,10 @@ server <- function(input, output, session){
       xlab("Date") +
       theme(axis.text.y = element_text(angle = 45)) 
     })
+  })
+  
+  output$markdown_explanation <- renderUI({
+    includeHTML('www/markdown_explanation.html')
   })
   
 }
