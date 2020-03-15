@@ -58,8 +58,7 @@ ui <- fluidPage(
     ),
     mainPanel(
       plotlyOutput('progression'),
-      uiOutput('markdown_explanation'),
-      img(src='explanation.png', align = "center")
+      uiOutput('markdown_explanation')
     )
   )
 )
