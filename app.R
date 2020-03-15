@@ -18,7 +18,7 @@ dr <- function(i, gamma){
   gamma * i
 }
 
-simulate_day <- function(t, s, i, r, beta, gamma){
+simulate_day <- function(s, i, r, beta, gamma){
   
   next_day <- list(
     s = s + ds(s, i, beta),
@@ -26,11 +26,8 @@ simulate_day <- function(t, s, i, r, beta, gamma){
     r = r + dr(i, gamma)
     )
   
-  next_day <- lapply(next_day[c('s', 'i', 'r')], function(x){ifelse(x < 0, 0, ifelse(x > 1, 1, x))})
+  lapply(next_day, function(x){ifelse(x < 0, 0, ifelse(x > 1, 1, x))})
   
-  next_day$t <- t
-  
-  return(next_day)
 }
 
 ui <- fluidPage(
@@ -93,7 +90,8 @@ server <- function(input, output, session){
     results <- list(t, s, i, r) %>% set_names("t", "s", "i", "r")
     for(t in 1:input$sim_duration){
       # cat(paste0("t: ", t, "\ts: ", s, "\ni: ", i, "\nr: ", r, "\n"))
-      new <- simulate_day(t, s, i, r, beta(), gamma())
+      new <- simulate_day(s, i, r, beta(), gamma())
+      new$t <- t
       results <- bind_rows(results, new)
       s <- new$s
       i <- new$i
