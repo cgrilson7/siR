@@ -123,7 +123,7 @@ server <- function(input, output, session){
       scale_x_date(date_breaks = "1 month", date_minor_breaks = "1 week", date_labels = "%B") +
       ylab("Population") + 
       xlab("Date") +
-      theme(axis.text.y = element_text(angle = 45)) 
+      theme(axis.text.y = element_text(angle = 45))
     })
   })
   
