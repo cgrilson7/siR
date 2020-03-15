@@ -15,6 +15,6 @@ There are a few key assumptions for this model. Beginning with the most unrealis
 
 * The population is homogeneous. Every susceptible individual is equally likely to become infected; every infected person is equally likely to transmit, recover, or die from the disease.
 
-* Once an individual has the disease for the full infectious period, $d$, they cannot infected or be infected again; hence, they are referred to as ‘removed’.
+* Once an individual has the disease and is no longer infectious, they cannot infect or be infected again. They are referred to as ‘removed’ because they no longer affect the dynamics of the susceptible and infected populations.
 
-* $d$ is also the time to death. Either individuals recover at $d$ days or they die at $d$ days (at a rate of $m$).
+* Removal occurs, on average, on the $d$-th day of infection. At this point, either individuals recover or they die (at a rate of $m$).
