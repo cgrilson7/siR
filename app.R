@@ -39,7 +39,7 @@ ui <- fluidPage(
     tags$style(type="text/css", "label{ text-align: center; vertical-align: middle; } .form-control { display: table-row; text-align: center;}")
   ),
   
-  titlePanel('An Compartmental Model of Infectious Disease'),
+  titlePanel('A Compartmental Model of Infectious Disease'),
   
   sidebarLayout(
     sidebarPanel(align = 'center',
@@ -51,7 +51,8 @@ ui <- fluidPage(
       sliderInput(inputId = 'c', label = "Avg. Infected Person's Contacts per Day", min = 0, max = 20, value = 10),
       sliderInput(inputId = 'p', label = "Probability of Infecting a Contact", min = 0.01, max = 1, value = 0.07),
       sliderInput(inputId = 'd', "Infectious Period (Days)", min = 1, max = 14, value = 7),
-      sliderInput(inputId = 'sim_duration', "Days to Simulate", min = 1, max = 360,  value = 90),
+      sliderInput(inputId = 'm', "Mortality Rate", min = 0, max = 1, value = 0.02),
+      sliderInput(inputId = 'sim_duration', "Days to Simulate", min = 1, max = 720,  value = 180),
       actionButton(inputId = 'simulate', label = "Run Simulation")
     ),
     mainPanel(
@@ -73,19 +74,20 @@ server <- function(input, output, session){
       input$c
       input$p
       input$d
+      input$m
       input$sim_duration
     },
     { # begin simulation:
+    t <- 0
     N <- input$N
     i <- input$I_0/N
     s <- 1 - i
     r <- 0
-    t <- 0
     
     results <- list(t, s, i, r) %>% set_names("t", "s", "i", "r")
     for(t in 1:input$sim_duration){
       cat(paste0("t: ", t, "\ts: ", s, "\ni: ", i, "\nr: ", r, "\n"))
-      new <- simulate_day(t, s, i, r, beta(), gamma()) 
+      new <- simulate_day(t, s, i, r, beta(), gamma())
       results <- bind_rows(results, new)
       s <- new$s
       i <- new$i
@@ -102,21 +104,23 @@ server <- function(input, output, session){
       mutate(date = input$start_date + days(t)) %>% 
       mutate(Susceptible = s*input$N,
              Infected = i*input$N,
-             Removed = r*input$N) %>% 
-      pivot_longer(Susceptible:Removed, names_to = "Status") %>% 
-      mutate(Status = factor(Status, levels = c("Susceptible", "Infected", "Removed")))
+             Removed = r*input$N) %>%
+      mutate(Recovered = (1-input$m)*Removed,
+             Dead = input$m*Removed) %>% 
+      pivot_longer(cols = c(Susceptible, Infected, Recovered, Dead), names_to = "Status") %>% 
+      mutate(Status = factor(Status, levels = c("Susceptible", "Infected", "Recovered", "Dead")))
     
     ggplotly({
       ggplot(df, aes(x = date, y = value)) + 
       geom_point(aes(color = Status), size = 2, alpha = 0.5) + 
       geom_line(aes(color = Status)) + 
-      scale_color_manual(values = c('darkgreen', 'darkred', 'gray')) + 
+      scale_color_manual(values = c('gold', 'darkred', 'lightgreen', 'gray')) + 
       theme_minimal() +
       scale_y_continuous(labels = scales::comma) + 
       scale_x_date(date_breaks = "1 month", date_minor_breaks = "1 week", date_labels = "%B") +
       ylab("Population") + 
       xlab("Date") +
-      theme(axis.text.y = element_text(angle = 45))
+      theme(axis.text.y = element_text(angle = 45)) 
     })
   })
   
