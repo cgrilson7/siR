@@ -57,8 +57,14 @@ ui <- fluidPage(
       actionButton(inputId = 'simulate', label = "Run Simulation")
     ),
     mainPanel(
-      plotlyOutput('progression'),
-      uiOutput('markdown_explanation')
+      tabsetPanel(id = 'Tabs',
+        tabPanel('Simulation',
+          plotlyOutput('progression')
+        ),
+        tabPanel('Methods',
+          uiOutput('markdown_explanation')
+        )
+      )
     )
   )
 )
@@ -99,6 +105,10 @@ server <- function(input, output, session){
     
     results
     
+  })
+  
+  observeEvent(input$simulate, {
+    updateTabsetPanel(session = session, inputId = 'Tabs', selected = 'Simulation')
   })
   
   output$progression <- renderPlotly({

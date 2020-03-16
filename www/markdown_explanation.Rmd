@@ -6,6 +6,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+### S-I-R (Compartmental) Modeling
+
 The model used for this simulation is an example of a [compartmental model](https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology), in which the population is divided into compartments, or disease states. Here, those states are **S**usceptible, **I**nfectious, and **R**emoved (recovered or dead). Individuals transition between the states according to transition rates, which we can express as a set of differential equations (see below).
 
 The key parameters governing the dynamics of the susceptible and infectious populations are \(\beta\) and \(\gamma\), which are determined by your inputs: $c$, $p$, and $d$. \(\beta\) is the expected number of infections per infected individual per day, and \(\gamma\) is the recovery rate. The ratio of these two is more commonly known as the basic reproduction number, *R~0~*!
@@ -16,6 +18,11 @@ There are a few key assumptions for this model. Beginning with the most unrealis
 
 * Once an individual has the disease and is no longer infectious, they cannot infect or be infected again. They are referred to as ‘removed’ because they no longer affect the dynamics of the susceptible and infected populations.
 
-* Removal occurs, on average, on the $d$-th day of infection. At this point, either individuals recover or they die (at a rate of $m$).
+* Removal occurs, on average, on the $d$-th day of infection. Upon removal, either individuals recover or they die (at a rate of $m$).
 
 ![](explanation.png)
+
+This set of ODEs does have an analytical solution [(Harko et al 2014)](https://arxiv.org/abs/1403.2160). But for the purpose of interpretability, I decided instead to run a simulation, where I have approximated these equations with $\Delta s/\Delta t$,  $\Delta i/\Delta t$, and $\Delta r/\Delta t$, respectively - where $\Delta t = 1$ (day). On each day $t$, $s_t$, $i_t$, and $r_t$ are updated accordingly:
+$$s_{t+1} = s_t - \beta s_t i_t$$
+$$i_{t+1} = \beta s_t i_t - \gamma i_t$$
+$$r_{t+1} = \gamma i_t$$
