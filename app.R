@@ -45,14 +45,14 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(align = 'center', width = 3,
       div(align = 'center', 
-        numericInput(inputId = 'N', HTML("Total Population (<em> N </em>)"), value = 331000000, min = 1000, max = NA, width = '50%'),
-        numericInput(inputId = 'I_0', "# Cases Today",  value = 4138, min = 0, max = NA, width = '50%'),
+        numericInput(inputId = 'N', HTML("Total Population, <em>N</em>"), value = 331000000, min = 1000, max = NA, width = '70%'),
+        numericInput(inputId = 'I_0', HTML("Total Cases Today, <em>I<sub>0</sub></em>"),  value = 4138, min = 0, max = NA, width = '70%'),
         # dateInput(inputId = 'start_date', "Date of Above Caseload", value = Sys.Date(), width = '70%')
       ),
-      sliderInput(inputId = 'c', label = HTML("Avg. Contacts per Day (<em> c </em>)"), min = 0, max = 20, value = 10),
-      sliderInput(inputId = 'p', label = HTML("Probability of Infecting a Contact (<em> p </em>)"), min = 0.01, max = 1, value = 0.07),
-      sliderInput(inputId = 'd', HTML("Infectious Period (Days, <em> d </em>)"), min = 1, max = 14, value = 7),
-      sliderInput(inputId = 'm', HTML("Mortality Rate (<em> m </em>)"), min = 0, max = 1, value = 0.02),
+      sliderInput(inputId = 'c', label = HTML("Avg. Contacts per Day, <em>c</em>"), min = 0, max = 20, value = 10),
+      sliderInput(inputId = 'p', label = HTML("Probability of Infecting a Contact, <em>p</em>"), min = 0.01, max = 1, value = 0.07),
+      sliderInput(inputId = 'd', HTML("Infectious Period, <em>d</em> (days)"), min = 1, max = 14, value = 7),
+      sliderInput(inputId = 'm', HTML("Mortality Rate, <em>m</em>"), min = 0, max = 1, value = 0.02),
       sliderInput(inputId = 'sim_duration', "Days to Simulate", min = 1, max = 720,  value = 180),
       actionButton(inputId = 'simulate', label = "Run Simulation")
     ),
