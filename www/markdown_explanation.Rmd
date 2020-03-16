@@ -24,5 +24,5 @@ There are a few key assumptions for this model. Beginning with the most unrealis
 
 This set of ODEs does have an analytical solution [(Harko et al 2014)](https://arxiv.org/abs/1403.2160). But for the purpose of interpretability, I decided instead to run a simulation, where I have approximated these equations with $\Delta s/\Delta t$,  $\Delta i/\Delta t$, and $\Delta r/\Delta t$, respectively - where $\Delta t = 1$ (day). On each day $t$, $s_t$, $i_t$, and $r_t$ are updated accordingly:
 $$s_{t+1} = s_t - \beta s_t i_t$$
-$$i_{t+1} = \beta s_t i_t - \gamma i_t$$
-$$r_{t+1} = \gamma i_t$$
+$$i_{t+1} = (\beta s_t - \gamma + 1)i_t$$
+$$r_{t+1} = (\gamma + 1) i_t$$
