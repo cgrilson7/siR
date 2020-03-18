@@ -14,7 +14,7 @@ The key parameters governing the dynamics of the susceptible and infectious popu
 
 There are a few key assumptions for this model. Beginning with the most unrealistic:
 
-* The population is homogeneous. Every susceptible individual is equally likely to become infected; every infectious person is equally likely to transmit, recover, or die from the disease.
+* The population is homogeneous. Every susceptible individual is equally likely to become infected; every infectious person is equally likely to transmit and recover/die from the disease.
 
 * Once an individual has the disease and is no longer infectious, they cannot infect or be infected again. They are referred to as ‘removed’ because they no longer affect the dynamics of the susceptible and infected populations.
 
