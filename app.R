@@ -5,29 +5,29 @@ library(lubridate)
 library(tidyr)
 library(purrr)
 library(plotly)
+library(deSolve)
 
-ds <- function(s, i, beta){
-  (-1 * beta * s * i)
-}
+# ds <- function(s, i, beta){
+#   (-1 * beta * s * i)
+# }
+# 
+# di <- function(s, i, beta, gamma){
+#   (beta * s * i)  - (gamma * i)
+# }
+# 
+# dr <- function(i, gamma){
+#   gamma * i
+# }
 
-di <- function(s, i, beta, gamma){
-  (beta * s * i)  - (gamma * i)
-}
-
-dr <- function(i, gamma){
-  gamma * i
-}
-
-simulate_day <- function(s, i, r, beta, gamma){
-  
-  next_day <- list(
-    s = s + ds(s, i, beta),
-    i = i + di(s, i, beta, gamma),
-    r = r + dr(i, gamma)
-    )
-  
-  lapply(next_day, function(x){ifelse(x < 0, 0, ifelse(x > 1, 1, x))})
-  
+equations <- function(t, state = c(s = 0.99, i = 0.01, r = 0), parameters = c(beta = 0.69, gamma = 0.69)){
+  with(as.list(c(state, parameters)), {
+    
+    ds <- -1 * beta * s * i
+    di <- beta*s*i - gamma*i
+    dr <- gamma*i
+    
+    list(c(ds, di, dr))
+  })
 }
 
 ui <- fluidPage(
@@ -86,25 +86,27 @@ server <- function(input, output, session){
       input$sim_duration
     },
     { # begin simulation:
-    t <- 0
+      
     N <- input$N
-    i <- input$I_0/N
-    s <- 1 - i
-    r <- 0
+    i_0 <- input$I_0/N
+    s_0 <- 1 - i
+    r_0 <- 0
+    beta <- input$c * input$p
+    gamma <- 1/input$d
     
-    results <- list(t, s, i, r) %>% set_names("t", "s", "i", "r")
-    for(t in 1:input$sim_duration){
-      # cat(paste0("t: ", t, "\ts: ", s, "\ni: ", i, "\nr: ", r, "\n"))
-      new <- simulate_day(s, i, r, beta(), gamma())
-      new$t <- t
-      results <- bind_rows(results, new)
-      s <- new$s
-      i <- new$i
-      r <- new$r
-    }
+    initial_state <- c(s = s_0, i = i_0, r = r_0)
     
-    results
+    times <- 0:input$sim_duration
     
+    parameters <- c(beta = beta, gamma = gamma)
+    
+    deSolve::ode(y = initial_state, times = times, func = equations, parms = parameters) %>%
+      as_tibble() %>%
+      mutate(time = as.integer(time)) %>% 
+      mutate_at(vars(s, i, r), as.numeric) %>% 
+      mutate(date = Sys.Date() + days(times)) %>% 
+      select(date, s, i, r)
+
   })
   
   observeEvent(input$simulate, {
@@ -114,8 +116,6 @@ server <- function(input, output, session){
   output$progression <- renderPlotly({
     
     df <- sim() %>% 
-      as_tibble() %>% 
-      mutate(date = Sys.Date() + days(t)) %>% 
       mutate(Susceptible = s*input$N,
              Infected = i*input$N,
              Removed = r*input$N) %>%
