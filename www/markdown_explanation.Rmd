@@ -1,4 +1,5 @@
 ---
+title: Compartmental Modeling
 output: html_document
 ---
 
@@ -6,20 +7,23 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-### S-I-R (Compartmental) Modeling
+This simulation is an example of a [compartmental model](https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology), in which the population is divided into compartments, or disease states. Here, those states are **S**usceptible, **I**nfectious, and **R**emoved (recovered or dead) - hence, this particular design is called the S-I-R model. Individuals transition between the states according to transition rates, which we can express as a set of differential equations (see below). The chart you're seeing on the main tab is the solution of these equations at various timepoints.
 
-The model used for this simulation is an example of a [compartmental model](https://en.wikipedia.org/wiki/Compartmental_models_in_epidemiology), in which the population is divided into compartments, or disease states. Here, those states are **S**usceptible, **I**nfectious, and **R**emoved (recovered or dead). Individuals transition between the states according to transition rates, which we can express as a set of differential equations (see below).
+The key parameters governing the dynamics of the susceptible and infectious populations are \(\beta\) and \(\gamma\), which are determined by your inputs $c$, $p$, and $d$.
 
-The key parameters governing the dynamics of the susceptible and infectious populations are \(\beta\) and \(\gamma\), which are determined by your inputs: $c$, $p$, and $d$. \(\beta\) is the expected number of infections per infected individual per day, and \(\gamma\) is the recovery rate. The ratio of these two is more commonly known as the basic reproduction number, *R~0~*!
+* \(\beta\) is the expected number of infections per infected individual per day, and
+* \(\gamma\) is the recovery rate. 
+* The ratio of these two is a number you may have seen thrown around lately - it's *R~0~*! A disease that is very contagious -- measles, for example -- will have an *R~0~* near 20. Estimates for COVID-19 are in the [2.2-3.6 range](https://www.ncbi.nlm.nih.gov/pubmed/32007643), slightly higher than influenza A(H1N1)pdm09, the predominent flu virus this season, which sits at [1.3](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4910438/).
 
 There are a few key assumptions for this model. Beginning with the most unrealistic:
 
 * The population is homogeneous. Every susceptible individual is equally likely to become infected; every infectious person is equally likely to transmit and recover/die from the disease.
 
+* Birth and (unrelated) death rates are ignored, with the assumption being that the dynamics of the disease outstrip these.
+
 * Once an individual has the disease and is no longer infectious, they cannot infect or be infected again. They are referred to as ‘removed’ because they no longer affect the dynamics of the susceptible and infected populations.
-
-* Removal occurs, on average, on the $d$-th day of infection. Upon removal, either individuals recover or they die (at a rate of $m$).
-
+  + Removal occurs, on average, on the $d$-th day of infection. Upon removal, either individuals recover or they die (at a rate of $m$).
+  
 ![](explanation.png)
 
 This set of ODEs does have an analytical solution [(Harko et al 2014)](https://arxiv.org/abs/1403.2160) - but to solve them in the app, I'm using the [deSolve](https://cran.r-project.org/web/packages/deSolve/index.html) R package.

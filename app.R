@@ -27,7 +27,9 @@ equations <- function(t, state = c(s = 0.99, i = 0.01, r = 0), parameters = c(be
     dr <- gamma*i
     
     list(c(ds, di, dr))
+    
   })
+  
 }
 
 ui <- fluidPage(
@@ -59,7 +61,7 @@ ui <- fluidPage(
     mainPanel(width = 9,
       tabsetPanel(id = 'Tabs',
         tabPanel('Simulation',
-          plotlyOutput('progression')
+          plotlyOutput('progression', width = '100%', height = '100%')
         ),
         tabPanel('Methods',
           uiOutput('markdown_explanation')
@@ -126,8 +128,8 @@ server <- function(input, output, session){
     
     ggplotly({
       ggplot(df, aes(x = date, y = value)) + 
-      geom_point(aes(color = Status), size = 2, alpha = 0.5) + 
-      geom_line(aes(color = Status)) + 
+      # geom_point(aes(color = Status), size = 2, alpha = 0.5) + 
+      geom_line(aes(color = Status), size = 2, alpha = 0.5) + 
       scale_color_manual(values = c('gold', 'darkred', 'lightgreen', 'gray')) + 
       theme_minimal() +
       scale_y_continuous(labels = scales::comma) + 
@@ -135,7 +137,8 @@ server <- function(input, output, session){
       ylab("Population") + 
       xlab("Date") +
       theme(axis.text.y = element_text(angle = 45))
-    })
+    }) %>% layout(legend = list(x = 0.8, y = 0.5))
+    
   })
   
   output$markdown_explanation <- renderUI({
