@@ -127,17 +127,20 @@ server <- function(input, output, session){
       mutate(Status = factor(Status, levels = c("Susceptible", "Infected", "Recovered", "Dead")))
     
     ggplotly({
+      
       ggplot(df, aes(x = date, y = value)) + 
       # geom_point(aes(color = Status), size = 2, alpha = 0.5) + 
       geom_line(aes(color = Status), size = 2, alpha = 0.5) + 
       scale_color_manual(values = c('gold', 'darkred', 'lightgreen', 'gray')) + 
-      theme_minimal() +
       scale_y_continuous(labels = scales::comma) + 
       scale_x_date(date_breaks = "1 month", date_minor_breaks = "1 week", date_labels = "%B") +
       ylab("Population") + 
       xlab("Date") +
+      theme_minimal() +
       theme(axis.text.y = element_text(angle = 45))
-    }) %>% layout(legend = list(x = 0.8, y = 0.5))
+      
+    }) %>%
+      layout(legend = list(x = 0.8, y = 0.5))
     
   })
   
