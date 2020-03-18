@@ -89,7 +89,7 @@ server <- function(input, output, session){
       
     N <- input$N
     i_0 <- input$I_0/N
-    s_0 <- 1 - i
+    s_0 <- 1 - i_0
     r_0 <- 0
     beta <- input$c * input$p
     gamma <- 1/input$d
