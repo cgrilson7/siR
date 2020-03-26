@@ -48,7 +48,7 @@ ui <- fluidPage(
     sidebarPanel(align = 'center', width = 3,
       div(align = 'center', 
         numericInput(inputId = 'N', HTML("Total Population, <em>N</em>"), value = 331000000, min = 1000, max = NA, width = '70%'),
-        numericInput(inputId = 'I_0', HTML("Total Cases Today, <em>I<sub>0</sub></em>"),  value = 4138, min = 0, max = NA, width = '70%'),
+        numericInput(inputId = 'I_0', HTML("Total Cases Today, <em>I<sub>0</sub></em>"),  value = 1e5, min = 0, max = NA, width = '70%'),
         # dateInput(inputId = 'start_date', "Date of Above Caseload", value = Sys.Date(), width = '70%')
       ),
       sliderInput(inputId = 'c', label = HTML("Avg. Contacts per Day, <em>c</em>"), min = 0, max = 20, value = 10),
@@ -119,18 +119,18 @@ server <- function(input, output, session){
     
     df <- sim() %>% 
       mutate(Susceptible = s*input$N,
-             Infected = i*input$N,
+             Infectious = i*input$N,
              Removed = r*input$N) %>%
       mutate(Recovered = (1-input$m)*Removed,
              Dead = input$m*Removed) %>% 
-      pivot_longer(cols = c(Susceptible, Infected, Recovered, Dead), names_to = "Status") %>% 
-      mutate(Status = factor(Status, levels = c("Susceptible", "Infected", "Recovered", "Dead")))
+      pivot_longer(cols = c(Susceptible, Infectious, Recovered, Dead), names_to = "Status") %>% 
+      mutate(Status = factor(Status, levels = c("Susceptible", "Infectious", "Recovered", "Dead")))
     
     ggplotly({
       
       ggplot(df, aes(x = date, y = value)) + 
-      # geom_point(aes(color = Status), size = 2, alpha = 0.5) + 
-      geom_line(aes(color = Status), size = 2, alpha = 0.5) + 
+      geom_point(aes(color = Status), size = 2, alpha = 0.7) + 
+      geom_line(aes(color = Status)) + 
       scale_color_manual(values = c('gold', 'darkred', 'lightgreen', 'gray')) + 
       scale_y_continuous(labels = scales::comma) + 
       scale_x_date(date_breaks = "1 month", date_minor_breaks = "1 week", date_labels = "%B") +
